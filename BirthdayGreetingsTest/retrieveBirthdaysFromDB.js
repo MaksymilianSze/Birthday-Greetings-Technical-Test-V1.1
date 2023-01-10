@@ -45,10 +45,13 @@ export function retrieveBirthdaysFromDB(date) {
               });
             }
           },
-          (err) => {
-            if (err) {
-              reject(err);
+          (error) => {
+            if (error) {
+              reject(error);
             } else {
+              console.log(
+                `Found ${friends.length} friend(s) with birthdays on ${date}`
+              );
               resolve(friends);
             }
           }
@@ -78,9 +81,9 @@ export function retrieveBirthdaysFromDB(date) {
               });
             }
           },
-          (err) => {
-            if (err) {
-              reject(err);
+          (error) => {
+            if (error) {
+              reject(error);
             } else {
               resolve(friends);
             }
