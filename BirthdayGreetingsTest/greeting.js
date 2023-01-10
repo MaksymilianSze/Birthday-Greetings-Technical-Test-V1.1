@@ -27,46 +27,8 @@ function sendGreeting(birthdayFriends, service) {
   }
 }
 
-function getTodaysFormattedDate() {
-  const today = new Date();
-  return `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`; // Format the date so that it matches the format used in the csv and return it
-}
-
-function getBirthdayFriends(friends) {
-  const today = getTodaysFormattedDate();
-  if (today.split("/").slice(1).join("/") === "02/28") {
-    // Check if today is Feb 28th and if it is, check if any of the friends have a birthday on Feb 29th
-    return friends.filter((friend) => {
-      if (friend.dateOfBirth.split("/").slice(1).join("/") === "02/29") {
-        return friend;
-      }
-      return friend.dateOfBirth === today;
-    });
-  } else if (today.split("/").slice(1).join("/") === "02/29") {
-    // If today is Feb 29th we don't want to send any greetings because then we would be sending a birthday greeting twice
-    return [];
-  }
-  return friends.filter((friend) => friend.dateOfBirth === today); // Filter the array of friends and return only the friends with a birthday today
-}
-
-function checkLeapDay(friends, birthday) {
-  if (birthday.split("/").slice(1).join("/") === "02/28") {
-    // Check if today is Feb 28th and if it is, check if any of the friends have a birthday on Feb 29th
-    return friends.filter((friend) => {
-      if (friend.dateOfBirth.split("/").slice(1).join("/") === "02/29") {
-        return friend;
-      }
-      return friend.dateOfBirth === birthday;
-    });
-  } else if (birthday.split("/").slice(1).join("/") === "02/29") {
-    // If today is Feb 29th we don't want to send any greetings because then we would be sending a birthday greeting twice
-    return [];
-  }
-  return friends;
-}
-
-function retrieveAllBirthdaysFromCSV() {
-  return readFileSync("birthdays.csv", "utf8")
+function retrieveBirthdaysFromCSV(date) {
+  const birthdayFriends = readFileSync("birthdays.csv", "utf8")
     .split("\n")
     .slice(1)
     .map((row) => {
@@ -75,71 +37,89 @@ function retrieveAllBirthdaysFromCSV() {
         .map((s) => s.trim()); // Parse the csv and store it as an array of objects and remove the whites spaces with trim()
       return { lastName, firstName, dateOfBirth, email };
     });
+
+  if (date.split("/").slice(1).join("/") === "02/28") {
+    // Check if today is Feb 28th and if it is, check if any of the friends have a birthday on Feb 29th
+    return birthdayFriends.filter((friend) => {
+      return (
+        friend.dateOfBirth.split("/").slice(1).join("/") === "02/29" ||
+        friend.dateOfBirth.split("/").slice(1).join("/") === "02/28"
+      );
+    });
+  } else if (date.split("/").slice(1).join("/") === "02/29") {
+    return []; // If today is Feb 29th we don't want to send any greetings because then we would be sending a birthday greeting twice
+  }
+  return birthdayFriends.filter(
+    (friend) =>
+      friend.dateOfBirth.split("/").slice(1).join("/") ===
+      date.split("/").slice(1).join("/")
+  );
 }
 
-async function retrieveAllBirthdaysFromDB() {
-  // Get all of the friends from the database so that we can use the previous functions to find which have a birthday today
-  return new Promise((resolve, reject) => {
-    const friends = [];
-    db.each(
-      `SELECT last_name, first_name, date_of_birth, email FROM friends`,
-      (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          friends.push({
-            lastName: row.last_name,
-            firstName: row.first_name,
-            dateOfBirth: row.date_of_birth,
-            email: row.email,
-          });
-        }
-      },
-      (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(friends);
-        }
-      }
-    );
-  });
-}
-
-function retrieveBirthdaysFromDB(birthday) {
+function retrieveBirthdaysFromDB(date) {
   // Because we are using a database we could only retrieve the birthdays of the friends that have a birthday today so we don't have to filter the array like we did with the CSV
-  return new Promise((resolve, reject) => {
-    let friends = [];
-    db.each(
-      `SELECT last_name, first_name, date_of_birth, email FROM friends WHERE substr(date_of_birth, 6) = ?`, // Compare only the month and day part
-      birthday,
-      (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          friends.push({
-            lastName: row.last_name,
-            firstName: row.first_name,
-            dateOfBirth: row.date_of_birth,
-            email: row.email,
-          });
+  date = date.split("/").slice(1).join("/"); // Remove the year from the date
+  const friends = [];
+  if (date === "02/28") {
+    const leap = "02/29";
+    return new Promise((resolve, reject) => {
+      db.each(
+        `SELECT last_name, first_name, date_of_birth, email FROM friends WHERE substr(date_of_birth, 6) = ? OR substr(date_of_birth, 6) = ?`, // Compare only the month and day part
+        date,
+        leap,
+        (err, row) => {
+          if (err) {
+            reject(err);
+          } else {
+            friends.push({
+              lastName: row.last_name,
+              firstName: row.first_name,
+              dateOfBirth: row.date_of_birth,
+              email: row.email,
+            });
+          }
+        },
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(friends);
+          }
         }
-      },
-      (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          friends = checkLeapDay(friends, birthday);
-          resolve(friends);
+      );
+    });
+  } else if (date === "02/29") {
+    return [];
+  } else {
+    return new Promise((resolve, reject) => {
+      let friends = [];
+      db.each(
+        `SELECT last_name, first_name, date_of_birth, email FROM friends WHERE substr(date_of_birth, 6) = ?`, // Compare only the month and day part
+        date,
+        (err, row) => {
+          if (err) {
+            reject(err);
+          } else {
+            friends.push({
+              lastName: row.last_name,
+              firstName: row.first_name,
+              dateOfBirth: row.date_of_birth,
+              email: row.email,
+            });
+          }
+        },
+        (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(friends);
+          }
         }
-      }
-    );
-  });
+      );
+    });
+  }
 }
 
-sendGreeting(getBirthdayFriends(retrieveAllBirthdaysFromCSV()), "email"); // Will do nothing unless it is someone's birthday
-sendGreeting(getBirthdayFriends(await retrieveAllBirthdaysFromDB()), "email"); // Will do nothing unless it is someone's birthday
-sendGreeting(
-  await retrieveBirthdaysFromDB("1975/09/11".split("/").slice(1).join("/")),
-  "email"
-); // Specify the date and it will send a greeting if there are any birthdays on that date
+console.log(retrieveBirthdaysFromCSV("2000/02/28"));
+console.log("\n");
+console.log(await retrieveBirthdaysFromDB("2000/02/28"));
