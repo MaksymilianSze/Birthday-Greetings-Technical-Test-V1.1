@@ -6,8 +6,14 @@ function useSMSService(phoneNumber, body) {
   // TODO: Send sms using sms service
 }
 
+const subject = "Happy birthday!";
+
 export function sendGreeting(birthdayFriends, service) {
-  const subject = "Happy birthday!";
+  if (typeof service === "email" || service === "sms") {
+    throw new Error(
+      "The service parameter must be a string that is either 'email' or 'sms'."
+    );
+  }
   for (const friend of birthdayFriends) {
     // Loop through the array of friends with a birthday and send an email to each friend
     const body = `Happy birthday, dear ${friend.firstName}!`;

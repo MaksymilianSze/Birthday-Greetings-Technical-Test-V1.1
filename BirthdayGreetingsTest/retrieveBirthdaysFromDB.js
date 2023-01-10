@@ -1,6 +1,14 @@
 import sqlite3 from "sqlite3";
 
+const dateFormat = /^\d{4}\/\d{2}\/\d{2}$/;
+
 export function retrieveBirthdaysFromDB(date) {
+  if (!dateFormat.test(date)) {
+    throw new Error(
+      `Invalid date format. Expected "yyyy/mm/dd", but got ${date}`
+    );
+  }
+
   const db = new sqlite3.Database(
     "birthdays.db",
     sqlite3.OPEN_READONLY,

@@ -1,6 +1,14 @@
 import { readFileSync } from "fs";
 
+const dateFormat = /^\d{4}\/\d{2}\/\d{2}$/;
+
 export function retrieveBirthdaysFromCSV(date) {
+  if (!dateFormat.test(date)) {
+    throw new Error(
+      `Invalid date format. Expected "yyyy/mm/dd", but got ${date}`
+    );
+  }
+
   try {
     const birthdayFriends = readFileSync("birthdays.csv", "utf8")
       .split("\n")
