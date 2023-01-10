@@ -16,3 +16,7 @@
 - If you see error `Error: Cannot find module ... node_sqlite3.node`
 - `npm uninstall sqlite3`
 - `npm install sqlite3`
+
+### Run the code
+
+- Run the app using `node app.js`
