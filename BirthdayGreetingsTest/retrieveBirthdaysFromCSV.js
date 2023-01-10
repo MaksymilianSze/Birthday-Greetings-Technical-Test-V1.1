@@ -29,6 +29,11 @@ export function retrieveBirthdaysFromCSV(date) {
     if (date === "02/28") {
       // Check if today is Feb 28th and if it is, check if any of the friends have a birthday on Feb 29th
       filteredBirthdayFriends = birthdayFriends.filter((friend) => {
+        if (!dateFormat.test(friend.dateOfBirth)) {
+          throw new Error(
+            `Invalid date format in CSV. Expected "yyyy/mm/dd", but got ${friend.dateOfBirth}`
+          );
+        }
         return (
           friend.dateOfBirth.split("/").slice(1).join("/") === "02/29" ||
           friend.dateOfBirth.split("/").slice(1).join("/") === "02/28"
