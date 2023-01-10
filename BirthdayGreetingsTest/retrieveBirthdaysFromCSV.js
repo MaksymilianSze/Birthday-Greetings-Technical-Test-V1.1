@@ -42,7 +42,7 @@ export function retrieveBirthdaysFromCSV(date) {
       );
     }
     console.log(
-      `Found ${filteredBirthdayFriends.length} friend(s) with birthdays on ${date}`
+      `Found ${filteredBirthdayFriends.length} friend(s) with birthday(s) on ${date}`
     );
     return filteredBirthdayFriends;
   } catch (error) {

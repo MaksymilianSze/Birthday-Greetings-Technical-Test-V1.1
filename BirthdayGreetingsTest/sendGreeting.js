@@ -9,9 +9,14 @@ function useSMSService(phoneNumber, body) {
 const subject = "Happy birthday!";
 
 export function sendGreeting(birthdayFriends, service) {
-  if (typeof service === "email" || service === "sms") {
+  if (typeof service === "email" || typeof service === "sms") {
     throw new Error(
       "The service parameter must be a string that is either 'email' or 'sms'."
+    );
+  }
+  if (birthdayFriends.length < 1) {
+    throw new Error(
+      "There must be atleast one friend with a birthday to send a greeting."
     );
   }
   for (const friend of birthdayFriends) {

@@ -7,3 +7,13 @@ console.log("\n");
 console.log(await retrieveBirthdaysFromDB("2000/02/28"));
 
 sendGreeting(retrieveBirthdaysFromCSV("2000/02/28"), "email");
+
+sendGreeting(retrieveBirthdaysFromCSV("2000/02/28"), "sms");
+
+sendGreeting(retrieveBirthdaysFromCSV("1997/02/12"), "email");
+
+sendGreeting(retrieveBirthdaysFromDB("1997/02/12"), "email");
+
+sendGreeting(retrieveBirthdaysFromCSV("1902/12"), "email");
+
+sendGreeting(retrieveBirthdaysFromCSV("1997/"), "email");

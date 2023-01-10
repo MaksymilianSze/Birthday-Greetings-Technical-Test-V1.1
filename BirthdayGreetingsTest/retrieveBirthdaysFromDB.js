@@ -50,7 +50,7 @@ export function retrieveBirthdaysFromDB(date) {
               reject(error);
             } else {
               console.log(
-                `Found ${friends.length} friend(s) with birthdays on ${date}`
+                `Found ${friends.length} friend(s) with birthday(s) on ${date}`
               );
               resolve(friends);
             }
