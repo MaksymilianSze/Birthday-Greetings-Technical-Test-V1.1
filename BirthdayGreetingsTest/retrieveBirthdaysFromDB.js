@@ -85,6 +85,9 @@ export function retrieveBirthdaysFromDB(date) {
             if (error) {
               reject(error);
             } else {
+              console.log(
+                `Found ${friends.length} friend(s) with birthday(s) on ${date}`
+              );
               resolve(friends);
             }
           }
