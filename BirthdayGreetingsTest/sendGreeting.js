@@ -22,7 +22,7 @@ export function sendGreeting(birthdayFriends, service) {
     // Loop through the array of friends with a birthday and send an email to each friend
     const body = `Happy birthday, dear ${friend.firstName}!`;
     if (service === "email") {
-      useEmailService(friend.email, subject, body);
+      useEmailService(friend.email, "Happy birthday!", body);
       console.log(
         `Sending email to ${friend.email} with subject: Happy birthday! and body: ${body}`
       );
