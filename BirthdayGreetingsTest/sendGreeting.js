@@ -6,8 +6,6 @@ function useSMSService(phoneNumber, body) {
   // TODO: Send sms using sms service
 }
 
-const subject = "Happy birthday!";
-
 export function sendGreeting(birthdayFriends, service) {
   if (service !== "email" && service !== "sms") {
     throw new Error(
@@ -26,7 +24,7 @@ export function sendGreeting(birthdayFriends, service) {
     if (service === "email") {
       useEmailService(friend.email, subject, body);
       console.log(
-        `Sending email to ${friend.email} with subject: ${subject} and body: ${body}`
+        `Sending email to ${friend.email} with subject: Happy birthday! and body: ${body}`
       );
     } else if (service === "sms") {
       useSMSService(friend.phoneNumber, body);
