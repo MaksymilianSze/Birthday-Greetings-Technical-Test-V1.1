@@ -9,6 +9,7 @@ export function convertDate(date) {
   } else {
     // use the Date object to check if the date is valid
     const dateObject = new Date(date);
+    // If any one of these is not the same then it means the date is invalid
     if (
       dateObject.getFullYear() != date.substring(0, 4) ||
       dateObject.getMonth() != date.substring(5, 7) - 1 ||
