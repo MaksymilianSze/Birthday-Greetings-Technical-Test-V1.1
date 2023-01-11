@@ -12,6 +12,8 @@ sendGreeting(retrieveBirthdaysFromCSV("2000/02/28"), "sms");
 
 sendGreeting(retrieveBirthdaysFromCSV("1997/02/12"), "email");
 
+sendGreeting(retrieveBirthdaysFromCSV("1997/10/08"), "email");
+
 sendGreeting(retrieveBirthdaysFromDB("1997/02/12"), "email");
 
 sendGreeting(retrieveBirthdaysFromCSV("1902/12"), "email");

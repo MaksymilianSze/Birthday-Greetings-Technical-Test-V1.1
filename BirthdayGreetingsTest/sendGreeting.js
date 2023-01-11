@@ -29,7 +29,9 @@ export function sendGreeting(birthdayFriends, service) {
       );
     } else if (service === "sms") {
       useSMSService(friend.phoneNumber, body);
-      console.log(`Sending sms to ${friend.phoneNumber} with body: ${body}`); // The data provided doesn't have phone numbers but if it did it would be part of the friend object so for now it will be undefined
+      console.log(
+        `Sending sms to ${friend.phoneNumber} with body: ${body}. Note: phone numbers haven't been implemented so it will show as undefined`
+      ); // The data provided doesn't have phone numbers but if it did it would be part of the friend object so for now it will be undefined
     }
   }
 }
